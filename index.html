@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/asset/img/tom.svg" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOM - IT</title>
+  <link rel="stylesheet" href="asset/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+   <!-- Modal Thông báo -->
+   <div id="reminderModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-icon">📚</div>
+      <h2 class="modal-title">Chào mừng bạn!</h2>
+      <p class="modal-message">
+        Hãy tập trung vào việc học tập và ôn luyện kiến thức để đạt kết quả tốt nhất!
+      </p>
+      <div class="modal-tips">
+        <h4>💡 Lời khuyên:</h4>
+        <ul>
+          <li>Tất thông tin câu hỏi trắc nghiệm được lấy từ bài giảng và file giảng viên, hãy xem thêm trong các slide bài giảng.</li>
+        
+        </ul>
+      </div>
+      <button class="modal-button" onclick="closeModal()">
+        <i class="fas fa-rocket"></i> Bắt đầu ôn thi
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" data-chapter="0">BẢO TRÌ PHẦN MỀM</button>
+      <button class="tab" data-chapter="1">HỆ THỐNG THÔNG TIN QUẢN LÝ</button>
+      <button class="tab" data-chapter="2">CHUYỂN ĐỔI SỐ</button>
+      <button class="tab" data-chapter="3">KIỂM THỬ PHẦN MỀM</button>
+      <button class="tab" data-chapter="4">QUẢN LÝ DỰ ÁN CNTT</button>
+    </div>
+
+    <div class="container-all">
+      <div class="quiz-container">
+        <div class="logo">
+          <img src="asset/img/dnc.jpg" alt="Logo">
+        </div>
+        <div class="title">Trắc nghiệm ôn thi</div>
+        <div id="progress"></div>
+      
+        <div id="quiz"></div>
+        <div class="controls">
+          <button id="prevBtn">
+            <i class="fas fa-chevron-left"></i> Quay lại
+          </button>
+          <button id="nextBtn">
+            Tiếp theo <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      <div class="grid-container">
+        <div class="question-grid" id="questionGrid"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+        // Hàm đóng modal
+        function closeModal() {
+      const modal = document.getElementById('reminderModal');
+      modal.style.animation = 'fadeOut 0.3s ease forwards';
+      setTimeout(() => {
+        modal.remove();
+      }, 300);
+    }
+
+    // Đóng modal khi click ngoài
+    document.getElementById('reminderModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // Đóng modal khi nhấn phím Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('reminderModal')) {
+        closeModal();
+      }
+    });
+
+   
+
+    const chapters = [
+    [
+  {
+    "q": "Trong phương pháp đo Điểm Chức Năng (Function Point), những loại thành phần nào được xem là cơ bản nhất?",
+    "options": [
+      "LOC, FP, CPLX, QUAL",
+      "EI, EO, EQ, ILF, EIF",
+      "Dev, Test, Ops, Maint",
+      "UI, UX, DB, API"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Nguyên nhân chính khiến các hệ thống phần mềm lâu đời (legacy systems) trở thành rào cản cho việc thay đổi là gì?",
+    "options": [
+      "Chạy chậm và khó giám sát",
+      "Không còn người dùng",
+      "Quá phức tạp nên không thể chỉnh sửa",
+      "Chất lượng suy giảm, cấu trúc phức tạp và thiếu tài liệu"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Trong khung làm việc bảo trì, mối quan hệ giữa sản phẩm phần mềm và môi trường được hiểu như thế nào?",
+    "options": [
+      "Phần mềm phải thích nghi với các thay đổi của môi trường",
+      "Môi trường được tạo ra từ phần mềm",
+      "Phần mềm tồn tại độc lập với môi trường",
+      "Môi trường chỉ ảnh hưởng đến nhân sự"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Khái niệm \"dòng mã delta\" trong đo lường bảo trì có ý nghĩa gì?",
+    "options": [
+      "Số dòng lệnh được thêm mới hoặc chỉnh sửa",
+      "Tổng số dòng lệnh sau bảo trì",
+      "Số dòng chú thích bổ sung",
+      "Số dòng mã bị xóa bỏ"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Ba thực thể chính thường được xem xét trong phép đo bảo trì phần mềm là gì?",
+    "options": [
+      "Yêu cầu, thiết kế, kiểm thử",
+      "Thời gian, chi phí, chất lượng",
+      "Quy trình, tài nguyên, sản phẩm",
+      "Mã nguồn, tài liệu, nhân sự"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Yếu tố nào sau đây thuộc về môi trường điều hành (Operating Environment) của hệ thống?",
+    "options": [
+      "Quy định pháp luật",
+      "Hệ điều hành và trình biên dịch",
+      "Áp lực cạnh tranh",
+      "Quy tắc nghiệp vụ"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Thách thức lớn nhất trong giai đoạn chuyển tiếp (Transition) của bảo trì phần mềm là gì?",
+    "options": [
+      "Đào tạo người dùng",
+      "Thay đổi nền tảng kỹ thuật",
+      "Chi phí phần cứng",
+      "Chuyển giao tri thức ngầm về hệ thống"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Việc phân loại các yêu cầu thay đổi trong bảo trì phần mềm có ý nghĩa gì?",
+    "options": [
+      "Tăng số lượng công việc",
+      "Giúp ưu tiên và xử lý yêu cầu hiệu quả",
+      "Loại bỏ yêu cầu không cần thiết",
+      "Chỉ phục vụ báo cáo"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Yếu tố nhân sự nào ảnh hưởng mạnh nhất đến hoạt động bảo trì phần mềm?",
+    "options": [
+      "Tốc độ thay thế nhân viên",
+      "Mức lương",
+      "Thời gian làm việc",
+      "Văn hóa tổ chức"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Công thức đúng để tính Điểm Chức Năng Điều Chỉnh (AFP) khi tổng hệ số kỹ thuật bằng 45 là gì?",
+    "options": [
+      "AFP = UFP × 45",
+      "AFP = UFP / (0.65 + 0.01 × 45)",
+      "AFP = UFP × (0.65 + 45)",
+      "AFP = UFP × (0.65 + 0.01 × 45)"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Nguyên nhân phổ biến khiến một yêu cầu thay đổi bị từ chối ở giai đoạn phân tích là gì?",
+    "options": [
+      "Thiếu tài nguyên hoặc vượt phạm vi hợp đồng",
+      "Lập trình viên không đồng ý",
+      "Hệ thống quá cũ",
+      "Người dùng thiếu kỹ năng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Theo chuẩn IEEE 1219, bảo trì phần mềm được định nghĩa như thế nào?",
+    "options": [
+      "Toàn bộ vòng đời phát triển phần mềm",
+      "Chỉ bao gồm sửa lỗi",
+      "Sửa đổi sau phát hành để sửa lỗi, cải tiến hoặc thích nghi",
+      "Xây dựng lại hệ thống mới"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Bảo trì hoàn thiện (Perfective Maintenance) thường bao gồm hoạt động nào?",
+    "options": [
+      "Cải tiến hoặc bổ sung chức năng mới",
+      "Sửa lỗi logic",
+      "Thích nghi môi trường",
+      "Tối ưu hiệu năng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Loại yêu cầu thay đổi nào xuất phát từ việc mở rộng chức năng hiện tại của hệ thống?",
+    "options": [
+      "Hoàn thiện",
+      "Hiệu chỉnh",
+      "Thích ứng",
+      "Dự phòng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Hoạt động nào giúp giảm khối lượng công việc bảo trì trong tương lai?",
+    "options": [
+      "Tái cấu trúc mã nguồn và cập nhật tài liệu",
+      "Giảm tương tác người dùng",
+      "Sửa lỗi khẩn cấp",
+      "Chỉ nâng cấp phần cứng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Bảo trì dự phòng (Preventive Maintenance) được xem là dạng nào?",
+    "options": [
+      "Bị động",
+      "Chủ động",
+      "Chỉ khi có lỗi",
+      "Theo yêu cầu khách hàng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Hoạt động refactor mã để loại bỏ code trùng lặp thuộc loại bảo trì nào?",
+    "options": [
+      "Dự phòng",
+      "Hoàn thiện",
+      "Hiệu chỉnh",
+      "Thích ứng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Mô hình phát triển nào giúp hạn chế việc tài liệu không đồng bộ với mã nguồn?",
+    "options": [
+      "Quick-Fix",
+      "Boehm",
+      "Tái sử dụng",
+      "Lặp và Tăng trưởng"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Yếu tố nào được xem là trở ngại lớn đối với việc thay đổi phần mềm?",
+    "options": [
+      "Thiếu nhân sự bảo trì có kỹ năng",
+      "Người dùng hợp tác tốt",
+      "Tài liệu đầy đủ",
+      "Hệ thống chất lượng cao"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Theo Luật Lehman, điều gì có xu hướng xảy ra khi phần mềm liên tục được sửa đổi?",
+    "options": [
+      "Tăng tốc độ xử lý",
+      "Giảm độ phức tạp",
+      "Tăng kích thước và độ phức tạp",
+      "Giảm kích thước hệ thống"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Nhược điểm chính của phân tích tác động dựa trên mã lệnh là gì?",
+    "options": [
+      "Không chính xác",
+      "Tốn thời gian và phạm vi hạn chế",
+      "Chỉ dùng cho ngôn ngữ C",
+      "Không cần mã nguồn"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Độ phức tạp McCabe cao (trên 10) cho thấy điều gì?",
+    "options": [
+      "Chương trình khó hiểu và khó bảo trì",
+      "Chương trình dễ kiểm thử",
+      "Hiệu năng thấp",
+      "Thiết kế tốt"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Yếu tố kỹ thuật nào giúp giảm chi phí bảo trì phần mềm?",
+    "options": [
+      "Mã nguồn phức tạp",
+      "Ngôn ngữ cấp thấp",
+      "Tài liệu chất lượng cao",
+      "Module phụ thuộc chặt chẽ"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Những yếu tố nào ảnh hưởng trực tiếp đến khả năng hiểu phần mềm?",
+    "options": [
+      "Số người dùng và vị trí địa lý",
+      "Phần cứng và hệ điều hành",
+      "Kinh nghiệm bảo trì viên và chất lượng tài liệu",
+      "Ngân sách và thời hạn"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Kế hoạch bảo trì nên được lập tốt nhất vào thời điểm nào?",
+    "options": [
+      "Sau khi phần mềm gặp lỗi",
+      "Khi dự án kết thúc",
+      "Trong giai đoạn phát triển phần mềm",
+      "Sau khi ký hợp đồng bảo trì"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một hệ thống có 3 EI đơn giản, 2 EO trung bình và 1 ILF phức tạp thì UFP bằng bao nhiêu?",
+    "options": [
+      "34",
+      "40",
+      "45",
+      "50"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Nguyên tắc SCM nào được thể hiện khi cập nhật đồng thời mã nguồn, CSDL, tài liệu và kiểm thử?",
+    "options": [
+      "Phân quyền truy cập",
+      "Kiểm soát thay đổi toàn diện",
+      "Quản lý phiên bản",
+      "Tự động hóa kiểm thử"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Khái niệm \"Information Gap\" trong bảo trì phần mềm đề cập đến điều gì?",
+    "options": [
+      "Thiếu tài liệu kỹ thuật",
+      "Lỗ hổng bảo mật",
+      "Khoảng cách giữa các phiên bản",
+      "Khoảng cách hiểu biết giữa người dùng và người phân tích"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Điều khoản nào thường KHÔNG có trong hợp đồng bảo trì phần mềm?",
+    "options": [
+      "Định nghĩa thuật ngữ",
+      "Mã nguồn đầy đủ",
+      "Chi phí và thanh toán",
+      "Phạm vi dịch vụ"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Chuẩn IEEE 1219 tổ chức quy trình bảo trì thành bao nhiêu giai đoạn chính?",
+    "options": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Tính dễ hiểu của phần mềm thường tỉ lệ nghịch với yếu tố nào?",
+    "options": [
+      "Tuổi phần mềm",
+      "Độ phức tạp",
+      "Số người dùng",
+      "Giao diện"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong SCM, khái niệm \"Baseline\" được hiểu là gì?",
+    "options": [
+      "Phiên bản đã được phê duyệt làm mốc",
+      "Danh sách nhân sự",
+      "Kế hoạch ngân sách",
+      "Dòng mã đầu tiên"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Công thức tính độ phức tạp McCabe là gì?",
+    "options": [
+      "v(G) = e – n + 2",
+      "v(G) = n + e × 2",
+      "v(G) = e + n – 2",
+      "v(G) = n – e + 2"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Chuyển hệ thống từ máy chủ vật lý sang nền tảng đám mây thuộc loại bảo trì nào?",
+    "options": [
+      "Hoàn thiện",
+      "Dự phòng",
+      "Hiệu chỉnh",
+      "Thích ứng"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Bốn vấn đề then chốt trong bảo trì phần mềm là gì?",
+    "options": [
+      "Phát triển, triển khai, vận hành, bảo trì",
+      "Kỹ thuật, quản lý, phép đo, ước lượng",
+      "Thiết kế, kiểm thử, phân tích, bảo trì",
+      "Tài liệu, mã nguồn, kiểm thử, quản lý"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Mô hình lặp và tăng trưởng dựa trên giả định cơ bản nào?",
+    "options": [
+      "Yêu cầu ổn định ngay từ đầu",
+      "Tài liệu quan trọng hơn mã",
+      "Yêu cầu được làm rõ qua nhiều vòng phản hồi",
+      "Người dùng không cần tham gia"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Loại bảo trì nào chiếm tỷ lệ cao nhất theo nghiên cứu của Lientz và Swanson?",
+    "options": [
+      "Hiệu chỉnh",
+      "Hoàn thiện",
+      "Dự phòng",
+      "Thích ứng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Điều chỉnh hệ thống COBOL để tương tác với hệ thống Java thuộc loại bảo trì nào?",
+    "options": [
+      "Thích ứng",
+      "Hoàn thiện",
+      "Hiệu chỉnh",
+      "Dự phòng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Hoạt động vận hành song song thường gắn liền với giai đoạn nào?",
+    "options": [
+      "Phân tích tác động",
+      "Chỉnh sửa mã",
+      "Di dời hệ thống",
+      "Sửa lỗi nhanh"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Phát biểu nào sau đây là SAI về bảo trì phần mềm?",
+    "options": [
+      "Chi phí hiểu hệ thống chiếm tỷ trọng lớn",
+      "Bảo trì quản lý sự tiến hóa phần mềm",
+      "Bảo trì bao gồm trước và sau phát hành",
+      "Bảo trì chỉ là sửa lỗi"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Yếu tố nào trực tiếp tạo ra nhu cầu thay đổi phần mềm?",
+    "options": [
+      "Yêu cầu người dùng",
+      "Nhân sự bảo trì",
+      "Tốc độ hệ thống",
+      "Màu giao diện"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Hạn chế lớn nhất của phép đo LOC là gì?",
+    "options": [
+      "Khó đếm",
+      "Phụ thuộc ngôn ngữ và không phản ánh chất lượng",
+      "Không đo được tài liệu",
+      "Tốn thời gian"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Chi phí sửa lỗi cao nhất thường xuất hiện ở giai đoạn nào?",
+    "options": [
+      "Phân tích yêu cầu",
+      "Thiết kế",
+      "Lập trình",
+      "Vận hành và bảo trì"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Dự án có 80 FP, ngôn ngữ Visual Basic với 40 LOC/FP thì kích thước ước lượng là bao nhiêu?",
+    "options": [
+      "320 LOC",
+      "1000 LOC",
+      "3200 LOC",
+      "8000 LOC"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Bốn bước chính của mô hình Tái sử dụng là gì?",
+    "options": [
+      "Phân tích, thiết kế, lập trình, kiểm thử",
+      "Lập kế hoạch, di dời, lưu trữ, ngưng dùng",
+      "Tiếp nhận, đánh giá, phê duyệt, thực hiện",
+      "Nhận dạng, hiểu, hiệu chỉnh, tích hợp"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Trong tái kiến tạo hướng đối tượng, \"Refactoring\" (Tái cấu trúc) nhằm mục đích gì?",
+    "options": [
+      "Phân phối lại biến và phương thức để chuẩn bị cho sự mở rộng.",
+      "Chuyển đổi mã nguồn hướng đối tượng sang mã nguồn thủ tục.",
+      "Xóa bỏ hoàn toàn các lớp cũ và viết lại các lớp mới.",
+      "Tăng số lượng dòng lệnh để chương trình trông phức tạp hơn."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Kỹ thuật đảo ngược ở mức \"Thực thi\" thường được gọi là gì?",
+    "options": [
+      "Phục hồi thiết kế",
+      "Phục hồi đặc tả",
+      "Dẫn chứng lại tài liệu",
+      "Tái cấu trúc"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Việc hiểu \"Lĩnh vực vấn đề\" của hệ thống giúp ích gì cụ thể cho phân tích viên trong bảo trì?",
+    "options": [
+      "Giúp lựa chọn giải thuật, phương pháp và công cụ bảo trì phù hợp",
+      "Giúp dự đoán cách các thay đổi về quy định nghiệp vụ hay nền tảng phần cứng sẽ tác động đến hệ thống.",
+      "Giúp tính toán chính xác chi phí bảo trì hàng tháng.",
+      "Giúp thiết kế giao diện người dùng thân thiện hơn."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Giả sử một hệ thống ngân hàng cũ cần chuyển từ giao diện ký tự sang giao diện đồ họa. Kỹ thuật nào là phù hợp nhất?",
+    "options": [
+      "Kỹ thuật Đảo ngược",
+      "Kỹ thuật Tái kiến tạo Giao diện người dùng",
+      "Kỹ thuật Tái cấu trúc",
+      "Kỹ thuật Phục hồi đặc tả"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Hãy sắp xếp chu trình chính xác các giai đoạn chính trong quá trình tái kiến tạo",
+    "options": [
+      "Tái cấu trúc → Đảo ngược → Chuyển tiếp",
+      "Chuyển tiếp → Đảo ngược → Tái cấu trúc",
+      "Đảo ngược → Tái cấu trúc → Chuyển tiếp",
+      "Đảo ngược → Chuyển tiếp → Tái cấu trúc"
+    ],
+    "answer": 2
+  },
+  {
+  "q": "Kỹ thuật Đảo ngược (Reverse Engineering) là gì?",
+  "options": [
+    "Là quy trình xây dựng hệ thống mới từ yêu cầu ban đầu.",
+    "Là quy trình phân tích hệ thống để xác định các thành phần và mối quan hệ của nó, tạo ra biểu diễn ở dạng hoặc mức trừu tượng khác.",
+    "Là quy trình kiểm thử tự động để phát hiện và sửa lỗi.",
+    "Là quy trình tối ưu hóa mã nguồn mà không thay đổi hành vi."
+  ],
+  "answer": 1
+},
+
+  {
+    "q": "Kỹ thuật Đảo ngược (Reverse Engineering) được định nghĩa là quy trình nào?",
+    "options": [
+      "Phân tích hệ thống để nhận dạng thành phần và tạo biểu diễn ở mức trừu tượng cao hơn.",
+      "Phân tích hệ thống để viết lại mã nguồn bằng ngôn ngữ mới.",
+      "Phân tích hệ thống để sửa lỗi logic ngay lập tức.",
+      "Phân tích hệ thống để tối ưu hóa cơ sở dữ liệu."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Trong mô hình hiểu chương trình, chiến lược \"Từ dưới lên\" bắt đầu từ đâu?",
+    "options": [
+      "Hiểu các chi tiết mức thấp như câu lệnh và biến.",
+      "Hiểu các chi tiết mức cao như chức năng tổng thể.",
+      "Chạy thử chương trình.",
+      "Phỏng vấn người dùng."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Mức trừu tượng thấp nhất của kỹ thuật đảo ngược được gọi là gì?",
+    "options": [
+      "Phục hồi thiết kế",
+      "Phục hồi đặc tả",
+      "Dẫn chứng lại tài liệu",
+      "Tái cấu trúc mã lệnh"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Nhân sự nào cần hiểu chi tiết mức thấp để dự đoán hiệu ứng dây chuyền khi thay đổi?",
+    "options": [
+      "Người quản lý",
+      "Phân tích viên",
+      "Lập trình viên",
+      "Thiết kế viên"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Kỹ thuật Tái kiến tạo khác với kỹ thuật Đảo ngược ở điểm nào?",
+    "options": [
+      "Tái kiến tạo chỉ thay đổi giao diện",
+      "Tái kiến tạo sửa đổi hệ thống để tái thiết, còn Đảo ngược chỉ giúp hiểu hệ thống",
+      "Tái kiến tạo tập trung vào tài liệu",
+      "Tái kiến tạo là bước đầu trước Đảo ngược"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phương pháp nào là cách tiếp cận để chuyển đổi chương trình trong tái kiến tạo CSDL?",
+    "options": [
+      "Dịch ngược",
+      "Viết lại",
+      "Mã hóa lại",
+      "Đóng gói"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Mối quan hệ giữa độ phức tạp chương trình và khả năng hiểu là gì?",
+    "options": [
+      "Càng phức tạp càng dễ hiểu",
+      "Càng phức tạp càng khó hiểu và khó bảo trì",
+      "Không liên quan",
+      "Càng đơn giản càng khó bảo trì"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Độ phức tạp và tính bảo trì hỗ trợ cho hoạt động nào?",
+    "options": [
+      "Lập trình chi tiết",
+      "Ra quyết định kỹ thuật và quản lý",
+      "Thiết kế giao diện",
+      "Kiểm thử tự động"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Hệ thống có tài liệu lỗi thời và mã rối cảnh báo điều gì?",
+    "options": [
+      "Hệ thống ổn định",
+      "Hệ thống mới phát triển",
+      "Hệ thống khó bảo trì và cần tái kiến tạo",
+      "Cần viết lại tài liệu"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Mục đích cuối cùng của việc hiểu chương trình trong bảo trì là gì?",
+    "options": [
+      "Sửa mọi lỗi tiềm ẩn",
+      "Thực hiện thành công các yêu cầu thay đổi",
+      "Tạo tài liệu mới",
+      "Tối ưu hiệu suất"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Điểm bắt đầu phổ biến nhất trong kỹ thuật Đảo ngược là gì?",
+    "options": [
+      "Tài liệu thiết kế",
+      "Mã nguồn",
+      "Yêu cầu người dùng",
+      "Báo cáo lỗi"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Lý do nào KHÔNG phải điều kiện để xem xét dùng kỹ thuật Đảo ngược?",
+    "options": [
+      "Tài liệu bị mất",
+      "Độ phức tạp tăng",
+      "Cần thêm chi phí và nhân sự",
+      "Chuyển sang nền tảng khác"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Giai đoạn nào cải thiện chất lượng bên trong ở cùng mức trừu tượng?",
+    "options": [
+      "Đảo ngược",
+      "Tái cấu trúc",
+      "Chuyển tiếp",
+      "Phục hồi"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Ai cần kiến thức về KLOC, FP để ra quyết định kinh tế?",
+    "options": [
+      "Lập trình viên",
+      "Phân tích viên",
+      "Người quản lý",
+      "Thiết kế viên"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong tái kiến tạo CSDL, Dịch lược đồ là gì?",
+    "options": [
+      "Chuyển đổi dữ liệu vật lý",
+      "Chuyển đổi chương trình ứng dụng",
+      "Chuyển đổi mô hình dữ liệu",
+      "Chuyển đổi giao diện"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Công việc nào KHÔNG thuộc mô hình hiểu chương trình?",
+    "options": [
+      "Đọc tài liệu",
+      "Chạy chương trình",
+      "Viết tài liệu thiết kế",
+      "Đọc mã nguồn"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Chiến lược nào kết hợp nhiều đầu mối để hiểu chương trình?",
+    "options": [
+      "Từ trên xuống",
+      "Từ dưới lên",
+      "Chiến lược cơ hội",
+      "Dựa trên tài liệu"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Giải pháp dài hạn cho spaghetti code là gì?",
+    "options": [
+      "Tái cấu trúc mã",
+      "Viết lại tài liệu",
+      "Ghi log chi tiết",
+      "Đổi thuật toán"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Mục tiêu của Tái kiến tạo Giao diện người dùng là gì?",
+    "options": [
+      "Thay đổi logic nghiệp vụ",
+      "Tái tạo giao diện cũ sang giao diện hiện đại",
+      "Tăng tốc xử lý",
+      "Giảm dung lượng lưu trữ"
+    ],
+    "answer": 1
+  }
+],
+ // =====================================================================================================================
+ [
+  {
+    "q": "Trong bối cảnh chuyển đổi số, hệ thống thông tin quản lý (MIS) đóng vai trò trung tâm như thế nào trong việc hỗ trợ các quyết định chiến lược của doanh nghiệp?",
+    "options": [
+      "MIS chủ yếu tập trung vào việc tự động hóa các tác vụ hàng ngày, ít ảnh hưởng đến quyết định chiến lược.",
+      "MIS chỉ hỗ trợ các quyết định tác nghiệp và quản lý, không liên quan đến tầm nhìn chiến lược của doanh nghiệp.",
+      "MIS cung cấp dữ liệu, phân tích và báo cáo, giúp lãnh đạo doanh nghiệp đưa ra các quyết định chiến lược dựa trên thông tin.",
+      "MIS là công cụ hỗ trợ kỹ thuật cho bộ phận IT, không trực tiếp tham gia vào quá trình hoạch định chiến lược."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một công ty bán lẻ trực tuyến sử dụng hệ thống CRM để quản lý tương tác với khách hàng. Hoạt động nào sau đây thể hiện rõ nhất vai trò của hệ thống CRM trong việc nâng cao trải nghiệm khách hàng?",
+    "options": [
+      "Tự động hóa quy trình thanh toán và giao hàng để giảm chi phí vận hành.",
+      "Phân tích lịch sử mua hàng và sở thích của khách hàng để gửi các đề xuất sản phẩm và ưu đãi cá nhân hóa.",
+      "Theo dõi số lượng hàng tồn kho và tối ưu hóa chuỗi cung ứng.",
+      "Cung cấp báo cáo doanh số hàng ngày cho bộ phận quản lý."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phân tích dữ liệu lớn (Big Data Analytics) đóng góp như thế nào vào việc cải thiện hiệu quả hoạt động của hệ thống thông tin quản lý trong một tổ chức y tế?",
+    "options": [
+      "Phân tích dữ liệu bệnh sử, kết quả xét nghiệm và thông tin dịch tễ học để dự đoán dịch bệnh và tối ưu hóa phân bổ nguồn lực y tế.",
+      "Sử dụng dữ liệu lớn để quản lý hồ sơ bệnh nhân điện tử và lịch hẹn khám bệnh.",
+      "Áp dụng Big Data để theo dõi hiệu suất làm việc của nhân viên y tế.",
+      "Dùng Big Data để quảng bá các dịch vụ y tế và thu hút bệnh nhân."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Trong một hệ thống hoạch định nguồn lực doanh nghiệp (ERP), module quản lý chuỗi cung ứng (SCM) phối hợp chặt chẽ nhất với module nào để đảm bảo quá trình sản xuất diễn ra liên tục và hiệu quả?",
+    "options": [
+      "Module Tài chính - Kế toán",
+      "Module Quản lý Nhân sự",
+      "Module Quản lý Sản xuất",
+      "Module Quản lý Bán hàng và Marketing"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Để đánh giá hiệu quả của một hệ thống thông tin quản lý mới triển khai, tiêu chí nào sau đây phản ánh rõ nhất khả năng hệ thống đáp ứng nhu cầu thông tin của người dùng?",
+    "options": [
+      "Chi phí đầu tư và vận hành hệ thống",
+      "Thời gian phản hồi của hệ thống khi truy vấn dữ liệu",
+      "Số lượng người dùng được đào tạo sử dụng hệ thống",
+      "Mức độ hài lòng của người dùng về tính đầy đủ, chính xác và kịp thời của thông tin do hệ thống cung cấp"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Một doanh nghiệp sản xuất muốn cải thiện quy trình kiểm soát chất lượng sản phẩm. Loại hệ thống thông tin quản lý nào sẽ hỗ trợ tốt nhất cho mục tiêu này?",
+    "options": [
+      "Hệ thống hỗ trợ ra quyết định (DSS)",
+      "Hệ thống thông tin quản lý sản xuất (Manufacturing MIS)",
+      "Hệ thống giao dịch xử lý (TPS)",
+      "Hệ thống thông tin điều hành cấp cao (EIS)"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong mô hình 5 lực lượng cạnh tranh của Porter, hệ thống thông tin quản lý có thể giúp doanh nghiệp giảm thiểu tác động của lực lượng 'quyền lực thương lượng của nhà cung cấp' bằng cách nào?",
+    "options": [
+      "Tăng cường quảng bá sản phẩm và dịch vụ để thu hút khách hàng.",
+      "Nâng cao hiệu quả quản lý nội bộ để giảm chi phí sản xuất.",
+      "Xây dựng hệ thống thông tin để tìm kiếm và so sánh giá cả từ nhiều nhà cung cấp khác nhau.",
+      "Đầu tư vào nghiên cứu và phát triển sản phẩm mới để tạo sự khác biệt hóa."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Điều gì KHÔNG phải là một lợi ích chính của việc sử dụng hệ thống thông tin quản lý dựa trên nền tảng đám mây (Cloud-based MIS)?",
+    "options": [
+      "Giảm chi phí đầu tư ban đầu vào cơ sở hạ tầng và phần mềm.",
+      "Dễ dàng mở rộng hoặc thu hẹp quy mô hệ thống theo nhu cầu sử dụng.",
+      "Truy cập hệ thống từ mọi nơi, mọi lúc thông qua internet.",
+      "Tăng cường khả năng kiểm soát dữ liệu và bảo mật thông tin tuyệt đối do doanh nghiệp tự quản lý hạ tầng."
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Trong quá trình phân tích và thiết kế hệ thống thông tin quản lý, giai đoạn nào tập trung vào việc xác định rõ yêu cầu nghiệp vụ và chức năng mà hệ thống cần đáp ứng?",
+    "options": [
+      "Giai đoạn phân tích hệ thống",
+      "Giai đoạn thiết kế hệ thống",
+      "Giai đoạn triển khai hệ thống",
+      "Giai đoạn bảo trì hệ thống"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Một hệ thống thông tin hỗ trợ ra quyết định (DSS) khác biệt với hệ thống xử lý giao dịch (TPS) chủ yếu ở điểm nào?",
+    "options": [
+      "DSS xử lý các giao dịch hàng ngày, TPS hỗ trợ ra quyết định.",
+      "DSS hỗ trợ ra quyết định bán cấu trúc và phi cấu trúc, TPS xử lý các giao dịch cấu trúc.",
+      "DSS được sử dụng bởi nhân viên tác nghiệp, TPS được sử dụng bởi nhà quản lý cấp cao.",
+      "DSS tập trung vào dữ liệu định lượng, TPS tập trung vào dữ liệu định tính."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Yếu tố nào sau đây KHÔNG thuộc về thành phần 'con người' trong một hệ thống thông tin quản lý?",
+    "options": [
+      "Người dùng cuối (End-users)",
+      "Nhân viên IT và chuyên gia hệ thống",
+      "Phần mềm ứng dụng (Application software)",
+      "Nhà quản lý hệ thống thông tin"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong bối cảnh an ninh mạng ngày càng phức tạp, hệ thống thông tin quản lý cần đặc biệt chú trọng đến khía cạnh nào để bảo vệ dữ liệu và thông tin của doanh nghiệp?",
+    "options": [
+      "Bảo mật hệ thống và an toàn dữ liệu",
+      "Tính khả dụng và khả năng truy cập hệ thống mọi lúc mọi nơi",
+      "Giao diện người dùng thân thiện và dễ sử dụng",
+      "Khả năng tích hợp với nhiều hệ thống khác nhau"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Một công ty du lịch muốn xây dựng hệ thống thông tin để quản lý tour, khách hàng và đặt phòng. Loại hệ thống thông tin nào phù hợp nhất cho mục đích này?",
+    "options": [
+      "Hệ thống quản lý tri thức (KMS)",
+      "Hệ thống hỗ trợ ra quyết định (DSS)",
+      "Hệ thống hoạch định nguồn lực doanh nghiệp (ERP)",
+      "Hệ thống quản lý quan hệ khách hàng (CRM) tích hợp chức năng đặt phòng"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Phát biểu nào sau đây mô tả đúng nhất về mối quan hệ giữa dữ liệu, thông tin và tri thức trong hệ thống thông tin quản lý?",
+    "options": [
+      "Thông tin là dữ liệu chưa được xử lý, tri thức là thông tin đã được tổ chức.",
+      "Dữ liệu được xử lý và tổ chức thành thông tin, thông tin được phân tích và diễn giải để tạo ra tri thức.",
+      "Tri thức là tập hợp các dữ liệu và thông tin liên quan đến một lĩnh vực cụ thể.",
+      "Dữ liệu, thông tin và tri thức là các khái niệm tương đương và có thể sử dụng thay thế cho nhau."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong một hệ thống thông tin quản lý bán hàng, chức năng nào sau đây KHÔNG thuộc về xử lý giao dịch (transaction processing)?",
+    "options": [
+      "Ghi nhận đơn hàng và cập nhật số lượng hàng tồn kho.",
+      "Xử lý thanh toán và in hóa đơn cho khách hàng.",
+      "Phân tích xu hướng bán hàng theo khu vực và thời gian.",
+      "Quản lý thông tin khách hàng và lịch sử mua hàng."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Để đảm bảo tính toàn vẹn của dữ liệu trong hệ thống thông tin quản lý, biện pháp nào sau đây là quan trọng nhất?",
+    "options": [
+      "Sao lưu dữ liệu thường xuyên để phòng ngừa mất mát dữ liệu.",
+      "Thiết lập các quy trình kiểm soát truy cập và xác thực người dùng.",
+      "Đào tạo người dùng về cách sử dụng hệ thống hiệu quả.",
+      "Nâng cấp phần cứng và phần mềm hệ thống định kỳ."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong quá trình chuyển đổi dữ liệu thành thông tin hữu ích, hoạt động 'tổng hợp dữ liệu' (data aggregation) có vai trò gì?",
+    "options": [
+      "Loại bỏ dữ liệu trùng lặp hoặc không chính xác.",
+      "Mã hóa dữ liệu để bảo vệ tính bảo mật.",
+      "Kết hợp dữ liệu từ nhiều nguồn khác nhau để tạo ra bức tranh tổng quan và thông tin có giá trị hơn.",
+      "Phân loại dữ liệu theo các tiêu chí khác nhau để dễ dàng quản lý."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một hệ thống thông tin quản lý hiệu quả cần đáp ứng các yêu cầu về chất lượng thông tin. Yêu cầu 'tính kịp thời' (timeliness) của thông tin có nghĩa là gì?",
+    "options": [
+      "Thông tin phải được trình bày một cách rõ ràng và dễ hiểu.",
+      "Thông tin phải chính xác và đáng tin cậy.",
+      "Thông tin phải liên quan và phù hợp với nhu cầu của người dùng.",
+      "Thông tin phải có sẵn và được cung cấp đúng thời điểm khi cần thiết cho việc ra quyết định."
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Trong quản lý dự án công nghệ thông tin, phương pháp 'Agile' thường được ưu tiên hơn phương pháp 'Waterfall' trong trường hợp nào?",
+    "options": [
+      "Khi yêu cầu dự án đã được xác định rõ ràng và ít có khả năng thay đổi.",
+      "Khi yêu cầu dự án chưa rõ ràng và có thể thay đổi trong quá trình phát triển.",
+      "Khi dự án có quy mô lớn và phức tạp với nhiều giai đoạn kéo dài.",
+      "Khi dự án yêu cầu tài liệu chi tiết và quy trình quản lý chặt chẽ."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Để đánh giá rủi ro trong dự án phát triển hệ thống thông tin quản lý, hoạt động nào sau đây cần được thực hiện đầu tiên?",
+    "options": [
+      "Nhận diện và liệt kê các rủi ro tiềm ẩn có thể xảy ra trong dự án.",
+      "Phân tích mức độ ảnh hưởng và khả năng xảy ra của từng rủi ro.",
+      "Xây dựng kế hoạch ứng phó và giảm thiểu rủi ro.",
+      "Giám sát và theo dõi các rủi ro trong suốt quá trình thực hiện dự án."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Trong mô hình hệ thống thông tin, 'đầu vào' (input) thường bao gồm những yếu tố nào?",
+    "options": [
+      "Báo cáo quản lý và quyết định điều hành.",
+      "Phần mềm ứng dụng và cơ sở dữ liệu.",
+      "Quy trình xử lý dữ liệu và thuật toán phân tích.",
+      "Dữ liệu thô, thông tin thu thập từ môi trường bên trong và bên ngoài doanh nghiệp."
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Hệ thống thông tin quản lý có thể hỗ trợ doanh nghiệp thực hiện trách nhiệm xã hội (CSR) như thế nào?",
+    "options": [
+      "Tối ưu hóa lợi nhuận và tăng trưởng doanh thu.",
+      "Tự động hóa quy trình sản xuất để giảm chi phí lao động.",
+      "Thu thập và phân tích dữ liệu về tác động môi trường, điều kiện làm việc và đóng góp cộng đồng để báo cáo và cải thiện.",
+      "Quảng bá hình ảnh doanh nghiệp trên các phương tiện truyền thông xã hội."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong kiến trúc hệ thống thông tin, tầng 'trình bày' (presentation layer) có chức năng chính là gì?",
+    "options": [
+      "Lưu trữ và quản lý dữ liệu.",
+      "Hiển thị giao diện người dùng và tương tác với người dùng.",
+      "Xử lý logic nghiệp vụ và tính toán.",
+      "Kết nối với các hệ thống và dịch vụ bên ngoài."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Xu hướng 'Internet of Things' (IoT) ảnh hưởng như thế nào đến hệ thống thông tin quản lý trong các ngành công nghiệp sản xuất?",
+    "options": [
+      "Tăng cường khả năng thu thập dữ liệu từ thiết bị và máy móc, cho phép giám sát và quản lý sản xuất theo thời gian thực.",
+      "Giảm sự phụ thuộc vào con người trong quy trình sản xuất.",
+      "Tăng chi phí đầu tư vào công nghệ thông tin.",
+      "Giảm tính bảo mật của dữ liệu sản xuất."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Để xây dựng một hệ thống thông tin quản lý thành công, yếu tố nào sau đây là quan trọng nhất bên cạnh công nghệ và quy trình?",
+    "options": [
+      "Lựa chọn công nghệ tiên tiến nhất.",
+      "Xây dựng quy trình phát triển hệ thống chặt chẽ.",
+      "Sự tham gia và ủng hộ của người dùng cuối và lãnh đạo doanh nghiệp.",
+      "Đảm bảo ngân sách dự án dồi dào."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong hệ thống thông tin quản lý nhân sự (HRMIS), chức năng nào sau đây hỗ trợ việc quản lý hiệu suất làm việc của nhân viên?",
+    "options": [
+      "Quản lý hồ sơ và thông tin cá nhân của nhân viên.",
+      "Theo dõi mục tiêu, đánh giá hiệu suất và cung cấp phản hồi cho nhân viên.",
+      "Quản lý lương, thưởng và phúc lợi.",
+      "Tuyển dụng và đào tạo nhân viên mới."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "'Data mining' (khai phá dữ liệu) là một kỹ thuật quan trọng trong hệ thống thông tin quản lý. Ứng dụng chính của Data mining là gì?",
+    "options": [
+      "Lưu trữ và quản lý dữ liệu hiệu quả.",
+      "Bảo mật và bảo vệ dữ liệu khỏi truy cập trái phép.",
+      "Trực quan hóa dữ liệu bằng biểu đồ và đồ thị.",
+      "Phân tích dữ liệu lớn để khám phá các mẫu hình, xu hướng và tri thức ẩn, hỗ trợ dự báo và ra quyết định."
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Để đảm bảo hệ thống thông tin quản lý hoạt động liên tục và ổn định, hoạt động 'bảo trì hệ thống' (system maintenance) bao gồm những công việc chính nào?",
+    "options": [
+      "Phân tích yêu cầu người dùng và thiết kế hệ thống mới.",
+      "Triển khai và đào tạo người dùng sử dụng hệ thống.",
+      "Sửa lỗi phần mềm, cập nhật phiên bản mới, tối ưu hóa hiệu suất và đảm bảo an ninh hệ thống.",
+      "Lập kế hoạch và quản lý dự án phát triển hệ thống."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong hệ thống thông tin quản lý tài chính (FMIS), báo cáo 'lưu chuyển tiền tệ' (cash flow statement) cung cấp thông tin quan trọng gì cho nhà quản lý?",
+    "options": [
+      "Thông tin về dòng tiền vào và ra của doanh nghiệp trong một kỳ, giúp đánh giá khả năng thanh toán và quản lý tiền mặt.",
+      "Thông tin về tình hình tài sản và nguồn vốn của doanh nghiệp tại một thời điểm.",
+      "Thông tin về doanh thu, chi phí và lợi nhuận của doanh nghiệp trong một kỳ.",
+      "Thông tin về các khoản nợ và nghĩa vụ tài chính của doanh nghiệp."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Khi lựa chọn hệ thống thông tin quản lý cho doanh nghiệp vừa và nhỏ (SME), yếu tố 'khả năng mở rộng' (scalability) của hệ thống có ý nghĩa như thế nào?",
+    "options": [
+      "Hệ thống phải có giao diện đẹp và dễ sử dụng.",
+      "Hệ thống phải có khả năng đáp ứng khi quy mô doanh nghiệp mở rộng, số lượng người dùng và dữ liệu tăng lên.",
+      "Hệ thống phải có chi phí đầu tư thấp nhất có thể.",
+      "Hệ thống phải được triển khai nhanh chóng trong thời gian ngắn."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Công việc nào KHÔNG thuộc nội dung chính của quá trình lập kế hoạch cài đặt hệ thống?",
+    "options": [
+      "Cài đặt phần mềm ứng dụng",
+      "Thiết lập thông số cấu hình",
+      "Thiết lập quyền sử dụng",
+      "Phát triển phần mềm ứng dụng từ đầu"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Nhiệm vụ quan trọng nhất của người cài đặt phần mềm ứng dụng là gì?",
+    "options": [
+      "Thiết kế giao diện người dùng",
+      "Giải quyết xung đột và không tương thích giữa các phần mềm",
+      "Viết lại toàn bộ mã nguồn phần mềm",
+      "Huấn luyện người dùng cuối"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Quá trình chuyển đổi sang hệ thống mới cần đảm bảo điều gì quan trọng nhất?",
+    "options": [
+      "Tăng chi phí vận hành",
+      "Không làm gián đoạn hoặc ách tắc các hoạt động của tổ chức",
+      "Thay thế toàn bộ nhân sự hiện tại",
+      "Giảm số lượng thiết bị phần cứng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Chuyển đổi yếu tố con người thường khó khăn và kéo dài hơn so với các yếu tố khác vì lý do nào?",
+    "options": [
+      "Chi phí phần cứng cao",
+      "Liên quan đến thói quen và tác phong làm việc cũ",
+      "Dữ liệu không thể chuyển đổi",
+      "Phần mềm không tương thích"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Bước nào KHÔNG thuộc quy trình tổ chức huấn luyện người sử dụng hệ thống mới?",
+    "options": [
+      "Lập kế hoạch các nhu cầu huấn luyện",
+      "Xác định phương pháp huấn luyện",
+      "Tổ chức huấn luyện lý thuyết và thực hành",
+      "Tuyển dụng nhân sự mới thay thế"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Phương pháp chuyển đổi trực tiếp (direct conversion) có ưu điểm nổi bật là gì?",
+    "options": [
+      "An toàn cao nhất",
+      "Thực hiện nhanh và ít tốn kém nhất",
+      "Dễ dàng khắc phục lỗi",
+      "Không cần huấn luyện người dùng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Nhược điểm lớn nhất của phương pháp chuyển đổi trực tiếp là gì?",
+    "options": [
+      "Chi phí rất cao",
+      "Không có khả năng ứng phó với rủi ro nếu hệ thống mới lỗi",
+      "Phải vận hành hai hệ thống cùng lúc",
+      "Khó khăn trong chia sẻ dữ liệu"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phương pháp chuyển đổi song song (parallel conversion) có ưu điểm nổi bật nào sau đây?",
+    "options": [
+      "Chi phí thấp nhất",
+      "Cho phép so sánh hai hệ thống và an toàn hơn",
+      "Thực hiện rất nhanh",
+      "Không cần tương thích giữa hai hệ thống"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phương pháp nào sau đây phù hợp nhất với tổ chức có nhiều chi nhánh xử lý công việc giống nhau?",
+    "options": [
+      "Chuyển đổi trực tiếp",
+      "Chuyển đổi song song",
+      "Chuyển đổi theo giai đoạn",
+      "Chuyển đổi thăm dò (pilot conversion)"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Nhược điểm chính của phương pháp chuyển đổi thăm dò (pilot conversion) là gì?",
+    "options": [
+      "Rủi ro rất cao",
+      "Phải viết thêm chương trình chia sẻ dữ liệu",
+      "Không thể tận dụng lợi thế của hệ thống mới",
+      "Chi phí thấp hơn chuyển đổi song song"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Quản lý cấu hình trong hệ thống thông tin nhằm mục đích chính là gì?",
+    "options": [
+      "Tăng tốc độ xử lý dữ liệu",
+      "Đảm bảo chỉ có những thay đổi có kiểm soát mới được chấp nhận",
+      "Giảm chi phí bảo trì phần cứng",
+      "Thay thế toàn bộ nhân sự quản trị"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Theo tài liệu chương 2, yếu tố nào được xem là \"trái tim của máy tính\"?",
+    "options": [
+      "Ổ cứng SSD",
+      "Bộ vi xử lý (CPU)",
+      "Bộ nhớ RAM",
+      "Card đồ họa"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phần mềm nào sau đây thuộc nhóm phần mềm mã nguồn mở (open source)?",
+    "options": [
+      "Microsoft Office",
+      "Adobe Photoshop",
+      "LibreOffice",
+      "Norton Antivirus"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Dữ liệu (Data) trong hệ thống thông tin được hiểu là gì?",
+    "options": [
+      "Thông tin đã được xử lý có ý nghĩa",
+      "Báo cáo tổng hợp cho lãnh đạo",
+      "Các sự việc thô như tên nhân viên, số giờ làm việc, mã vật tư",
+      "Quy trình xử lý thông tin"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Thông tin (Information) khác dữ liệu ở điểm nào cơ bản?",
+    "options": [
+      "Thông tin là dữ liệu đã được tổ chức, xử lý để có ý nghĩa và hỗ trợ quyết định",
+      "Thông tin chỉ dùng cho cấp lãnh đạo cao",
+      "Thông tin là dữ liệu thô chưa xử lý",
+      "Thông tin không liên quan đến dữ liệu"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Hệ thống thông tin quản lý (MIS) là gì theo định nghĩa cơ bản?",
+    "options": [
+      "Hệ thống chỉ dùng phần cứng máy tính",
+      "Hệ thống chỉ xử lý giao dịch hàng ngày",
+      "Hệ thống tự động hóa hoàn toàn không cần con người",
+      "Hệ thống bao gồm con người, thiết bị và quy trình cung cấp thông tin kịp thời, chính xác cho quyết định"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Một trong các thành phần chính của MIS theo Chương 2 là gì?",
+    "options": [
+      "Khách hàng",
+      "Quy trình nghiệp vụ",
+      "Tài nguyên phần cứng (Hardware)",
+      "Đối thủ cạnh tranh"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Bộ vi xử lý (CPU) được ví như gì trong máy tính?",
+    "options": [
+      "Thiết bị lưu trữ dài hạn",
+      "Trái tim của máy tính",
+      "Màn hình hiển thị",
+      "Bộ nhớ tạm thời"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Bộ nhớ RAM có vai trò chính là gì?",
+    "options": [
+      "Xử lý đồ họa",
+      "Lưu trữ vĩnh viễn dữ liệu",
+      "Lưu trữ tạm thời dữ liệu trong quá trình sử dụng",
+      "Kết nối mạng"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Sự khác biệt chính giữa HDD và SSD là gì?",
+    "options": [
+      "HDD dùng điện tử",
+      "SSD dùng cơ học",
+      "HDD nhanh hơn",
+      "HDD rẻ hơn, SSD nhanh hơn và ít lỗi hơn"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Phần mềm mã nguồn mở (open source) có đặc điểm nổi bật nào?",
+    "options": [
+      "Chỉ dùng trong doanh nghiệp lớn",
+      "Luôn có phí bản quyền cao",
+      "Mã nguồn công khai, có thể chỉnh sửa miễn phí",
+      "Không cho phép chỉnh sửa"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Ví dụ phần mềm mã nguồn mở phổ biến là gì?",
+    "options": [
+      "Norton Antivirus",
+      "Adobe Photoshop",
+      "Microsoft Office",
+      "LibreOffice"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Bảo mật hệ thống thông tin quan trọng chủ yếu vì lý do nào?",
+    "options": [
+      "Giảm chi phí phần cứng",
+      "Tăng tốc độ xử lý",
+      "Tránh lộ thông tin quan trọng dẫn đến thiệt hại",
+      "Chỉ để trang trí"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một biện pháp bảo mật phổ biến là gì?",
+    "options": [
+      "Cài thêm màn hình",
+      "Thay ổ cứng mới",
+      "Tăng dung lượng RAM",
+      "Sao lưu dữ liệu thường xuyên"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Hệ thống truyền thông gồm ít nhất bao nhiêu yếu tố cơ bản?",
+    "options": [
+      "Bốn",
+      "Một",
+      "Ba (thiết bị phát, kênh truyền, thiết bị nhận)",
+      "Hai"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Kênh truyền thông hữu tuyến bao gồm loại nào?",
+    "options": [
+      "Bluetooth",
+      "Tia hồng ngoại",
+      "Cáp đồng và cáp quang",
+      "Sóng radio"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Các thành phần con người trong MIS bao gồm ai?",
+    "options": [
+      "Chỉ kỹ thuật viên",
+      "Người sử dụng IS và người xây dựng, bảo trì MIS",
+      "Chỉ lãnh đạo",
+      "Chỉ nhân viên hành chính"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Cơ sở dữ liệu (CSDL) được định nghĩa như thế nào?",
+    "options": [
+      "Chỉ file Excel",
+      "Phần mềm vẽ biểu đồ",
+      "Tổng thể dữ liệu thu thập, tổ chức khoa học để truy cập dễ dàng",
+      "Phần cứng lưu trữ"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Theo Chương 3, quá trình phát triển MIS có thể thực hiện theo cách nào?",
+    "options": [
+      "Không cần phát triển",
+      "Chỉ toàn bộ",
+      "Chỉ từng phần",
+      "Từng phần, toàn bộ hoặc phát triển hệ thống hiện tại"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Mục tiêu chính của MIS trong tổ chức là gì?",
+    "options": [
+      "Cung cấp thông tin kịp thời, chính xác cho quyết định quản lý",
+      "Thiết kế website",
+      "Chỉ lưu trữ dữ liệu",
+      "Chơi game"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Hệ điều hành phổ biến hiện nay bao gồm những gì?",
+    "options": [
+      "Word, Excel",
+      "Chrome",
+      "Photoshop",
+      "Windows, macOS, Linux"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Tiêu chí lựa chọn phần cứng cho MIS bao gồm những gì?",
+    "options": [
+      "Màu sắc đẹp",
+      "Tương thích, khả năng mở rộng, độ tin cậy",
+      "Giá rẻ nhất",
+      "Nhỏ gọn"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Card đồ họa có chức năng chính là gì?",
+    "options": [
+      "Lưu trữ dữ liệu",
+      "Hiển thị hình ảnh trên màn hình",
+      "Xử lý âm thanh",
+      "Kết nối mạng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Truyền thông kỹ thuật số có loại nào?",
+    "options": [
+      "Chỉ không đồng bộ",
+      "Không đồng bộ và đồng bộ",
+      "Không có loại",
+      "Chỉ đồng bộ"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phân loại mạng máy tính theo phạm vi địa lý bao gồm gì?",
+    "options": [
+      "Chỉ WAN",
+      "Bluetooth",
+      "LAN, MAN, WAN",
+      "Chỉ LAN"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Theo tài liệu, thông tin chiến lược thường dùng cho cấp nào?",
+    "options": [
+      "Nhân viên tác nghiệp",
+      "Nhà quản lý cao cấp, dài hạn",
+      "Chỉ phòng ban",
+      "Khách hàng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Thông tin điều hành (tác nghiệp) cần đặc điểm gì?",
+    "options": [
+      "Tổng hợp cao",
+      "Không cần chính xác",
+      "Chi tiết, phục vụ giám sát hàng ngày",
+      "Từ bên ngoài"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Quy trình phát triển hệ thống thông tin thường bao gồm những giai đoạn nào?",
+    "options": [
+      "Chỉ mua phần cứng",
+      "Chỉ huấn luyện",
+      "Phân tích yêu cầu, thiết kế, triển khai, bảo trì",
+      "Chỉ sao lưu dữ liệu"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một mô hình phát triển hệ thống phổ biến là gì?",
+    "options": [
+      "Không mô hình",
+      "Chỉ agile",
+      "Chỉ prototype",
+      "Waterfall (thác nước)"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Vai trò của con người trong MIS là gì?",
+    "options": [
+      "Không cần thiết",
+      "Thành phần quan trọng nhất, sử dụng và quản lý hệ thống",
+      "Chỉ lập trình",
+      "Chỉ nhập dữ liệu"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Ví dụ phần mềm ứng dụng là gì?",
+    "options": [
+      "Card mạng",
+      "Ổ cứng SSD",
+      "Hệ điều hành Windows",
+      "Microsoft Office (Word, Excel, PowerPoint)"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Bảo mật mạng bao gồm biện pháp nào?",
+    "options": [
+      "Tăng RAM",
+      "Tường lửa, phát hiện xâm nhập",
+      "Thay CPU",
+      "Cài game"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Theo tài liệu, nguồn nhân lực MIS gồm những ai?",
+    "options": [
+      "Chỉ khách hàng",
+      "Người sử dụng và người xây dựng/bảo trì",
+      "Chỉ lãnh đạo",
+      "Chỉ nhà cung cấp"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Mô hình lưu trữ dữ liệu trong MIS thường là gì?",
+    "options": [
+      "Giấy tờ",
+      "File Word",
+      "Không lưu trữ",
+      "Cơ sở dữ liệu có cấu trúc"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Chương 3 nhấn mạnh việc gì trong phát triển MIS?",
+    "options": [
+      "Tin học hóa từng phần hoặc toàn bộ tổ chức",
+      "Chỉ mua phần mềm",
+      "Không cần phát triển",
+      "Chỉ thay phần cứng"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Phân tích hệ thống thông tin nhằm mục đích gì?",
+    "options": [
+      "Bán sản phẩm",
+      "Hiểu cấu trúc, khảo sát và phân tích để cải thiện",
+      "Huấn luyện lãnh đạo",
+      "Thay đổi nhân sự"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Ví dụ phần mềm bảo mật là gì?",
+    "options": [
+      "Google Chrome",
+      "Avast, Kaspersky",
+      "Microsoft Word",
+      "Windows Media Player"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Đào tạo nhân viên về bảo mật nhằm mục đích gì?",
+    "options": [
+      "Giảm giá phần mềm",
+      "Tăng tốc độ máy",
+      "Hướng dẫn sử dụng đúng biện pháp bảo mật",
+      "Thay đổi giao diện"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Hệ thống thông tin máy tính (CBIS) gồm những thành phần nào?",
+    "options": [
+      "Chỉ phần cứng",
+      "Phần cứng, phần mềm, dữ liệu, con người, quy trình",
+      "Chỉ dữ liệu",
+      "Chỉ phần mềm"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Theo tài liệu, dữ liệu thô cần được xử lý thành gì?",
+    "options": [
+      "Không xử lý",
+      "File rác",
+      "Thông tin có ý nghĩa",
+      "Dữ liệu mới"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một loại kênh truyền vô tuyến là gì?",
+    "options": [
+      "Cáp đồng",
+      "Sóng viba (microwave)",
+      "Dây điện",
+      "Cáp quang"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Tiêu chí độ tin cậy của phần cứng nghĩa là gì?",
+    "options": [
+      "Giá rẻ",
+      "Hoạt động ổn định, ít hỏng hóc",
+      "Màu sắc đẹp",
+      "Nhẹ"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Phần mềm ứng dụng dùng để làm gì?",
+    "options": [
+      "Quản lý phần cứng",
+      "Lưu trữ vĩnh viễn",
+      "Kết nối mạng",
+      "Giải quyết nhu cầu cụ thể của người dùng (Word, Excel...)"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Trong MIS, quy trình (procedures) bao gồm gì?",
+    "options": [
+      "Chỉ con người",
+      "Chỉ dữ liệu",
+      "Chiến lược, chính sách, phương pháp sử dụng hệ thống",
+      "Chỉ phần cứng"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Thông tin quản lý trong tổ chức thường có mấy loại chính?",
+    "options": [
+      "Một",
+      "Ba (chiến lược, chiến thuật, điều hành)",
+      "Hai",
+      "Bốn"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Hệ thống tình báo trong MIS cung cấp thông tin gì?",
+    "options": [
+      "Lương nhân viên",
+      "Thông tin hàng ngày về môi trường bên ngoài",
+      "Báo cáo tài chính",
+      "Chỉ dữ liệu nội bộ"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Quá trình tin học hóa trong phát triển MIS có thể theo cách nào?",
+    "options": [
+      "Chỉ thủ công",
+      "Không tin học hóa",
+      "Chỉ toàn bộ",
+      "Từng phần hoặc toàn bộ"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Mục tiêu của khảo sát hệ thống là gì?",
+    "options": [
+      "Tìm hiểu cấu trúc tổng quan và hiện trạng",
+      "Thay đổi nhân sự",
+      "Huấn luyện lãnh đạo",
+      "Bán sản phẩm"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Theo tài liệu, MIS hỗ trợ gì cho doanh nghiệp?",
+    "options": [
+      "Chỉ lưu trữ ảnh",
+      "Thiết kế logo",
+      "Chơi game",
+      "Ra quyết định, lập kế hoạch, kiểm soát"
+    ],
+    "answer": 3
+  }
+],
+// =====================================================================================================================
+       [
+  {
+    "q": "Nền tảng quản lý học tập (LMS) thường được sử dụng trong chuyển đổi số trong giáo dục là:",
+    "options": [
+      "Facebook, Zalo, TikTok",
+      "Moodle, Canvas, Google Classroom",
+      "Word, Excel, PowerPoint",
+      "Gmail Email, Hotmail, Yahoo Mail"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Ứng dụng của trí tuệ nhân tạo (AI) trong giáo dục số là gì?",
+    "options": [
+      "Thay thế giáo viên về nhiệm vụ giảng dạy và ra đề",
+      "Giảm nội dung học tập của sinh viên",
+      "Xóa bỏ bài kiểm tra truyền thống",
+      "Cá nhân hóa lộ trình học tập và hỗ trợ cho từng sinh viên"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Sinh viên cần trang bị kỹ năng gì để phù hợp với môi trường doanh nghiệp số?",
+    "options": [
+      "Ghi nhớ kiến thức về những tài liệu số hóa",
+      "Năng lực số, phân tích dữ liệu, tư duy đổi mới",
+      "Kỹ năng tin học văn phòng",
+      "Công nhân làm theo quy trình mà không cần trang bị kỹ năng mới"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Một trong những lợi ích quan trọng của chuyển đổi số trong khởi nghiệp là:",
+    "options": [
+      "Loại bỏ hoàn toàn rủi ro kinh doanh",
+      "Không cần vốn khởi nghiệp",
+      "Không cần chiến lược phát triển",
+      "Dễ dàng tiếp cận thị trường toàn cầu"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Văn hóa tổ chức như thế nào sẽ tác động đến chuyển đổi số trong doanh nghiệp?",
+    "options": [
+      "Chỉ cần công nghệ hiện đại là đủ",
+      "Văn hóa tôn trọng giá trị truyền thống",
+      "Văn hóa sáng tạo, học hỏi công nghệ và phương pháp mới",
+      "Văn hóa chăm lo đời sống tinh thần của nhân viên"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Theo Nghị quyết số 03/NQ-CP, ngày 09/01/2025 của Chính phủ xác định mục tiêu của việc phát triển hạ tầng số xanh là:",
+    "options": [
+      "Đảm bảo phát triển công nghệ gắn liền với tiết kiệm năng lượng và bền vững",
+      "Tăng trưởng bằng cách gia tăng các hình thức sản xuất khác nhau",
+      "Đặt lợi nhuận lên hàng đầu",
+      "Tiết kiệm chi phí sản xuất"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Khi xây dựng chiến lược chuyển đổi số trong giáo dục, yếu tố nào quyết định sự thành công lâu dài?",
+    "options": [
+      "Đầu tư thiết bị công nghệ hiện đại nhất và phần mềm tiên tiến nhất",
+      "Tăng học phí để bù chi phí công nghệ và đào tạo con người.",
+      "Sự cam kết, tầm nhìn dài hạn của lãnh đạo và phát triển năng lực số cho giảng viên, sinh viên.",
+      "Chỉ áp dụng cho một số khoa, ngành điển hình có trang bị công nghệ hiện đại."
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một trường đại học đầu tư mạnh vào hạ tầng số, nền tảng học trực tuyến nhưng không đào tạo kỹ năng số cho giảng viên và sinh viên. Vấn đề chính yếu trong trường hợp này là:",
+    "options": [
+      "Chi phí quá cao trong đào tạo, bồi dưỡng nhân lực",
+      "Thiếu kinh phí trong triển khai kế hoạch chuyển đổi số trong giáo dục",
+      "Thiếu nguồn nhân lực chất lượng cao",
+      "Thiếu đầu tư đồng bộ giữa công nghệ và con người"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Nếu trường đại học triển khai AI chatbot để hỗ trợ sinh viên nhưng không kiểm soát nội dung phản hồi, rủi ro lớn nhất là gì?",
+    "options": [
+      "Chatbot trả lời sai hoặc thiếu chính xác, ảnh hưởng đến uy tín và niềm tin của sinh viên",
+      "Tăng số lượng sinh viên hỏi",
+      "Sinh viên không biết sử dụng hệ thống như thế nào.",
+      "Chatbot phản hồi chậm"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Một trường đại học muốn áp dụng blockchain trong quản lý văn bằng, chứng chỉ. Lợi ích quan trọng nhất là gì?",
+    "options": [
+      "Đảm bảo tính minh bạch, chống làm giả, xác thực dễ dàng trên toàn cầu",
+      "Giảm chi phí quản lý văn bằng, chứng chỉ",
+      "Giảm chi phí in ấn văn bằng, chứng chỉ",
+      "Tăng tốc độ cấp phát bằng cấp, chứng chỉ"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Mô hình doanh nghiệp số (Digital Business Model) được hiểu là gì?",
+    "options": [
+      "Cách doanh nghiệp sử dụng máy tính để lưu trữ hồ sơ khách hàng.",
+      "Cách doanh nghiệp tạo ra giá trị và cung cấp sản phẩm/dịch vụ dựa trên công nghệ số, dữ liệu và nền tảng trực tuyến.",
+      "Doanh nghiệp hoạt động hoàn toàn không có nhân viên mà chỉ dùng robot.",
+      "Mô hình kinh doanh dựa trên cửa hàng vật lý và chuỗi cung ứng truyền thống."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong hạ tầng công nghệ số của doanh nghiệp, công nghệ nào cho phép mở rộng năng lực lưu trữ và xử lý mà không cần đầu tư máy chủ vật lý?",
+    "options": [
+      "Blockchain",
+      "Big Data",
+      "Điện toán đám mây (Cloud Computing)",
+      "Internet vạn vật (IoT)"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong chuyển đổi số giáo dục, việc giáo viên sử dụng LMS (Learning Management System) giúp đạt được lợi ích nào sau đây?",
+    "options": [
+      "Loại bỏ hoàn toàn vai trò của giáo viên",
+      "Chỉ thay thế PowerPoint bằng video",
+      "Quản lý lớp học, theo dõi tiến độ và cá nhân hóa lộ trình học tập",
+      "Tự động chấm điểm mà không cần dữ liệu học tập"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Trong mô hình doanh nghiệp số, yếu tố nào giữ vai trò trung tâm quyết định khả năng cá nhân hóa sản phẩm/dịch vụ?",
+    "options": [
+      "Cơ sở vật chất.",
+      "Dữ liệu và phân tích dữ liệu khách hàng.",
+      "Bộ phận marketing truyền thống.",
+      "Hệ thống kế toán – tài chính."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Một sinh viên sử dụng ChatGPT để viết báo cáo về \"Tác động của AI trong giáo dục\", nhưng kết quả thiếu dẫn chứng và ví dụ cụ thể. Nguyên nhân chủ yếu nhất khiến kết quả chưa đạt yêu cầu là gì?",
+    "options": [
+      "ChatGPT không có dữ liệu về lĩnh vực giáo dục Việt Nam.",
+      "Sinh viên chưa biết cách đặt câu hỏi (prompt) cụ thể và có ngữ cảnh.",
+      "Hệ thống AI bị lỗi tạm thời.",
+      "Nội dung báo cáo không phù hợp để ChatGPT xử lý."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Khi lưu trữ dữ liệu nhóm nghiên cứu trên Google Drive, hành động nào tiềm ẩn rủi ro bảo mật cao nhất?",
+    "options": [
+      "Chia sẻ liên kết với quyền “Bất kỳ ai có đường liên kết đều xem được”.",
+      "Giới hạn truy cập theo địa chỉ email nội bộ.",
+      "Sử dụng mã hóa hai lớp (2FA).",
+      "Đặt tên thư mục theo mã dự án thay vì tên đề tài."
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Khi một trường đại học dùng máy quét để chuyển toàn bộ hồ sơ sinh viên từ giấy sang file PDF lưu trên máy tính, ta đang thực hiện quá trình nào?",
+    "options": [
+      "Tin học hóa",
+      "Số hóa",
+      "Chuyển đổi số",
+      "Tổ chức thông minh."
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Khi một doanh nghiệp dùng phần mềm Excel để quản lý điểm sinh viên thay vì ghi sổ tay truyền thống, nhưng quy trình làm việc vẫn giữ nguyên cấu trúc cũ, chúng ta gọi đó là gì?",
+    "options": [
+      "Số hóa",
+      "Chuyển đổi số",
+      "Tin học hóa",
+      "Tổ chức số"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một trường đại học triển khai hệ thống học trực tuyến (LMS), thay đổi đồng thời cách dạy – học, kiểm tra, tương tác với sinh viên, là ví dụ cho khái niệm nào?",
+    "options": [
+      "Tin học hóa",
+      "Số hóa",
+      "Chuyển đổi số",
+      "Số hóa quy trình"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một lợi ích của chuyển đổi số đối với cơ quan nhà nước là:",
+    "options": [
+      "Tăng chi phí vận hành",
+      "Thủ tục hành chính phức tạp hơn",
+      "Hành chính minh bạch, nhanh, chính xác và hiệu quả hơn",
+      "Giảm khả năng tiếp cận dịch vụ công"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Khi một doanh nghiệp sử dụng chatbot 24/7 chăm sóc khách hàng thay cho tổng đài truyền thống, điều này giúp doanh nghiệp:",
+    "options": [
+      "Giảm trải nghiệm khách hàng",
+      "Tăng chi phí nhân sự",
+      "Tối ưu hóa quy trình và tiết kiệm chi phí",
+      "Giảm độ tin cậy"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Khi một doanh nghiệp không muốn mua máy chủ riêng mà sử dụng dịch vụ để lưu trữ và xử lý dữ liệu, đây là ứng dụng nền tảng nào trong chuyển đổi số?",
+    "options": [
+      "Blockchain và niềm tin số",
+      "Tổ chức thông minh",
+      "Điện toán đám mây",
+      "Di động hóa đa kênh"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Nền tảng thương mại điện tử đề xuất sản phẩm phù hợp cho từng người dùng dựa trên yếu tố nào?",
+    "options": [
+      "Vị trí địa lý",
+      "Thời gian truy cập",
+      "Phân tích hành vi và lịch sử tìm kiếm",
+      "Mức độ chi tiêu trung bình"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Tổ chức như Grab tạo ra mô hình kinh doanh mới dựa trên loại dữ liệu nào?",
+    "options": [
+      "Dữ liệu tài chính nội bộ",
+      "Dữ liệu vị trí, nhu cầu và thời gian của người dùng",
+      "Dữ liệu về nhà cung cấp dịch vụ",
+      "Dữ liệu quảng cáo"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Tổ chức như Grab tạo ra mô hình kinh doanh mới dựa trên loại dữ liệu nào?",
+    "options": [
+      "Dữ liệu tài chính nội bộ",
+      "Dữ liệu vị trí, nhu cầu và thời gian của người dùng",
+      "Dữ liệu về nhà cung cấp dịch vụ",
+      "Dữ liệu quảng cáo"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Công nghệ Big Data được ứng dụng trong hoạt động nào sau đây?",
+    "options": [
+      "Tạo mô hình 3D trong thực tế ảo",
+      "Phân tích hành vi khách hàng và phát hiện gian lận",
+      "Kết nối thiết bị thông minh",
+      "Bảo vệ an ninh mạng"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Theo định hướng của Nghị quyết 03/NQ-CP, hạ tầng viễn thông được ưu tiên phát triển với mục tiêu nào?",
+    "options": [
+      "Phủ sóng WiFi miễn phí toàn quốc",
+      "Phát triển mạng 5G và băng rộng tốc độ cao đến hộ gia đình",
+      "Tăng số lượng nhà mạng mới",
+      "Giảm chi phí sử dụng điện thoại cho người dân"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong ứng dụng chẩn đoán hình ảnh y khoa bằng AI, yếu tố giúp hệ thống đạt độ chính xác cao là:",
+    "options": [
+      "Tốc độ quét X-quang càng nhanh thì AI càng chính xác",
+      "AI thay thế hoàn toàn vai trò của bác sĩ trong chẩn đoán",
+      "Sử dụng thuật toán mã hóa để bảo vệ dữ liệu",
+      "Huấn luyện mô hình trên tập dữ liệu lớn gồm nhiều ảnh y tế"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Vì sao AI có thể phát hiện gian lận tài chính theo thời gian thực trong lĩnh vực ngân hàng?",
+    "options": [
+      "Vì ngân hàng cung cấp hệ thống phần cứng mạnh nhất",
+      "Vì AI so sánh mọi giao dịch với một mẫu giao dịch cố định",
+      "Vì AI phân tích liên tục hành vi giao dịch và phát hiện bất thường dựa trên mô hình học máy",
+      "Vì tất cả giao dịch đều được lưu trữ tập trung tại ngân hàng"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Dịch vụ IaaS và PaaS của điện toán đám mây khác nhau ở điểm nào?",
+    "options": [
+      "IaaS cung cấp phần mềm hoàn chỉnh, PaaS cung cấp máy chủ",
+      "IaaS cung cấp hạ tầng ảo hóa; PaaS cung cấp nền tảng phát triển và triển khai ứng dụng",
+      "PaaS luôn rẻ hơn IaaS",
+      "PaaS không cần quản trị"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Trong IoT, lý do 5G được xem là công nghệ hạ tầng quan trọng nhất là:",
+    "options": [
+      "Băng thông lớn, cho phép điều khiển thiết bị từ xa có độ trễ thấp",
+      "Mạng 5G cho phép truyền dữ liệu mà không cần trạm phát sóng cố định",
+      "Mạng 5G không cần bảo mật",
+      "Mạng 5G chỉ phục vụ cho điện thoại di động có kết nối IoT"
+    ],
+    "answer": 0
+  },
+  {
+    "q": "Đặc tính quan trọng nhất giúp Blockchain tăng độ tin cậy trong các giao dịch số là:",
+    "options": [
+      "Tốc độ xử lý cao hơn mọi công nghệ khác",
+      "Dữ liệu được lưu trữ phi tập trung, khó bị sửa đổi hoặc giả mạo",
+      "Blockchain chỉ lưu trữ dữ liệu văn bản",
+      "Tất cả dữ liệu blockchain đều công khai 100%"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Big Data được xem là nền tảng của AI và IoT trong chuyển đổi số vì:",
+    "options": [
+      "Big Data giúp xóa bỏ nhu cầu sử dụng thuật toán",
+      "AI và IoT đều yêu cầu lượng dữ liệu lớn để học và đưa ra quyết định",
+      "Big Data thay thế hoàn toàn IoT",
+      "Big Data chỉ dùng trong thương mại điện tử"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Một doanh nghiệp muốn hiểu rõ hành vi khách hàng để tăng doanh số. Công nghệ nào phù hợp để áp dụng phân tích dữ liệu?",
+    "options": [
+      "Tổ chức khảo sát truyền thống bằng giấy",
+      "Tăng cường gọi điện tư vấn",
+      "Lập bảng Excel thủ công cho từng giao dịch",
+      "Sử dụng hệ thống CRM tích hợp AI phân tích hành vi mua sắm"
+    ],
+    "answer": 3
+  },
+  {
+    "q": "Một doanh nghiệp đã đầu tư nhiều công nghệ nhưng hiệu quả thấp vì nhân viên không sử dụng hết tính năng. Doanh nghiệp cần ưu tiên giải pháp nào để tối ưu chuyển đổi số?",
+    "options": [
+      "Mua thêm thiết bị phần cứng và các máy tính tốc độ cao",
+      "Thay tất cả phần mềm sang loại đắt tiền hơn",
+      "Tổ chức đào tạo kỹ năng số và hướng dẫn sử dụng công nghệ",
+      "Giảm số lượng nhân viên"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Sinh viên muốn chia sẻ thư mục tài liệu nhóm nhưng không muốn người khác chỉnh sửa. Cách làm đúng nhất:",
+    "options": [
+      "Chia sẻ Google Drive với quyền “Editor”",
+      "Chia sẻ Google Drive với quyền “Viewer”",
+      "Gửi file qua Messenger",
+      "Gửi file qua Zalo để hạn chế tải về"
+    ],
+    "answer": 1
+  },
+  {
+    "q": "Một sinh viên viết luận văn cần tìm bài nghiên cứu học thuật về tác động của AI trong giáo dục. Công cụ nào cho kết quả chuyên sâu nhất?",
+    "options": [
+      "Facebook hoặc Messenger",
+      "Google thông thường",
+      "Google Scholar hoặc IEEE Xplore",
+      "ChatGPT hoặc Gemini để tạo bài hoàn chỉnh"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một giáo viên muốn AI tự động tạo biểu đồ từ dữ liệu điểm của 200 sinh viên. Dữ liệu đang nằm trong Excel. Giải pháp hiệu quả nhất là:",
+    "options": [
+      "Vẽ biểu đồ từ menu lệnh Chart của Excel",
+      "Sao chép dữ liệu vào Google và tìm biểu đồ mẫu",
+      "Nhập file Excel vào AI để tự động phân tích và tạo biểu đồ",
+      "Dùng PowerPoint để vẽ biểu đồ"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một doanh nghiệp bán lẻ muốn giảm sai sót khi kiểm kho và tăng tốc độ xử lý đơn hàng. Giải pháp chuyển đổi số phù hợp nhất ở mức cơ bản là gì?",
+    "options": [
+      "Xây dựng hệ thống ERP toàn diện cho toàn công ty",
+      "Sử dụng AI để dự báo nhu cầu trong 12 tháng tới",
+      "Ứng dụng công nghệ RFID/mã vạch kết hợp phần mềm quản lý kho",
+      "Thuê tư vấn bên ngoài đánh giá quy trình vận hành"
+    ],
+    "answer": 2
+  },
+  {
+    "q": "Một doanh nghiệp sản xuất muốn theo dõi thời gian thực tình trạng máy móc và giảm thời gian dừng máy. Họ nên ưu tiên giải pháp nào?",
+    "options": [
+      "Đổi mới toàn bộ dây chuyền sản xuất",
+      "Sử dụng phần mềm kế toán để ghi nhận chi phí bảo trì",
+      "Gắn cảm biến IoT và sử dụng phần mềm giám sát thiết bị",
+      "Tổ chức thêm các lớp đào tạo vận hành máy"
+    ],
+    "answer": 2
+  }
+],
+       // =====================================================================================================================
+      [
+        {
+          "q": "Chưa có câu hỏi ôn KTPM!",
+          "options": [""],
+          "answer": 0
+        }
+      ],
+       // =====================================================================================================================
+      [
+        {
+          "q": "Chưa có câu hỏi ôn QLDA-CNTT!",
+          "options": [""],
+          "answer": 0
+        }
+      ]
+    ];
+  
+    const chapterStates = chapters.map(chapter => ({
+      shuffledQuestions: null,
+      answered: null,
+      current: 0,
+      showingAnswer: false,
+      comboStreak: 0,
+      comboCounted: null,
+      isFinished: false
+    }));
+  
+    let currentChapter = 0;
+  
+    const progressElement = document.getElementById("progress");
+    const comboContainer = document.createElement("div");
+    comboContainer.style.cssText = `
+      margin: 12px 0;
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+    `;
+  
+    const comboDisplay = document.createElement("div");
+    comboDisplay.id = "comboDisplay";
+    comboDisplay.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 1.1em;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      transform: scale(0.8);
+    `;
+  
+    const fireIcon = document.createElement("span");
+    fireIcon.id = "fireIcon";
+    fireIcon.innerHTML = "";
+    fireIcon.style.fontSize = "1.4em";
+  
+    const comboText = document.createElement("span");
+    comboText.id = "comboText";
+  
+    comboDisplay.appendChild(fireIcon);
+    comboDisplay.appendChild(comboText);
+    comboContainer.appendChild(comboDisplay);
+    progressElement.parentNode.insertBefore(comboContainer, progressElement.nextSibling);
+  
+    const breakStreakElement = document.createElement("div");
+    breakStreakElement.id = "breakStreak";
+    breakStreakElement.style.cssText = `
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #ef4444; color: white; padding: 14px 28px; border-radius: 16px;
+      font-weight: bold; font-size: 1.2em; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+      z-index: 1000; opacity: 0; transition: all 0.5s ease; pointer-events: none;
+    `;
+    document.body.appendChild(breakStreakElement);
+  
+    function showBreakStreakMessage() {
+      breakStreakElement.textContent = "❌ GÃY CHUỖI! Bạn đã thất bại giữ chuỗi trả lời đúng.";
+      breakStreakElement.style.opacity = "1";
+      setTimeout(() => {
+        breakStreakElement.style.opacity = "0";
+      }, 3000);
+    }
+  
+    function updateComboDisplay() {
+      const state = getCurrentState();
+      if (state.comboStreak === 0) {
+        comboDisplay.style.opacity = "0";
+        comboDisplay.style.transform = "scale(0.8)";
+        return;
+      }
+  
+      const fireCount = Math.min(state.comboStreak, 15);
+      fireIcon.innerHTML = "🔥 ".repeat(fireCount);
+      comboText.textContent = `Combo: ${state.comboStreak} liên tiếp!`;
+  
+      comboDisplay.className = "";
+      if (state.comboStreak >= 10) {
+        comboDisplay.classList.add("combo-level-10");
+      } else if (state.comboStreak >= 5) {
+        comboDisplay.classList.add("combo-level-5");
+      } else {
+        comboDisplay.classList.add("combo-level-1");
+      }
+  
+      comboDisplay.style.opacity = "1";
+      comboDisplay.style.transform = "scale(1)";
+    }
+  
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+  
+    function getCurrentState() {
+      return chapterStates[currentChapter];
+    }
+  
+    function updateProgress() {
+      const state = getCurrentState();
+      document.getElementById("progress").textContent =
+        `Chương ${currentChapter + 1} - Câu ${state.current + 1}/${state.shuffledQuestions.length} - Còn lại ${state.shuffledQuestions.length - state.current - 1} câu`;
+      updateComboDisplay();
+    }
+  
+    function updateQuestionGrid() {
+      const state = getCurrentState();
+      const grid = document.getElementById("questionGrid");
+      let html = "";
+      state.shuffledQuestions.forEach((_, i) => {
+        const isAnswered = state.answered[i] !== null;
+        const isCurrent = i === state.current;
+        html += `<div class="grid-item ${isAnswered ? 'answered' : ''} ${isCurrent ? 'current' : ''}" data-index="${i}">${i + 1}</div>`;
+      });
+      grid.innerHTML = html;
+  
+      document.querySelectorAll(".grid-item").forEach(item => {
+        item.addEventListener("click", () => {
+          state.current = parseInt(item.getAttribute("data-index"));
+          state.showingAnswer = false;
+          loadQuestion();
+        });
+      });
+    }
+  
+    function loadQuestion() {
+      const state = getCurrentState();
+      const qBox = document.getElementById("quiz");
+      const q = state.shuffledQuestions[state.current];
+      let html = `<div class="question">${q.q}</div><div class="options">`;
+      q.options.forEach((opt, i) => {
+        const checked = state.answered[state.current] === i ? "checked" : "";
+        html += `
+          <label>
+            <input type="radio" name="opt" value="${i}" ${checked}>
+            <span>${opt}</span>
+          </label>`;
+      });
+      html += "</div><div id='answerBox'></div>";
+      qBox.innerHTML = html;
+  
+      document.getElementById("prevBtn").disabled = state.current === 0;
+    // Trong hàm loadQuestion()
+    document.getElementById("nextBtn").innerHTML = 
+  state.current === state.shuffledQuestions.length - 1 
+    ? 'Kết thúc <i class="fas fa-flag-checkered"></i>' 
+    : 'Tiếp theo <i class="fas fa-chevron-right"></i>';
+  
+      document.querySelectorAll('input[name="opt"]').forEach(input => {
+        input.addEventListener("change", e => {
+          state.answered[state.current] = parseInt(e.target.value);
+          updateQuestionGrid();
+        });
+      });
+  
+      updateProgress();
+      updateQuestionGrid();
+      state.showingAnswer = false;
+    }
+  
+    function switchChapter(chapterIndex) {
+      const prevState = getCurrentState();
+      currentChapter = chapterIndex;
+  
+      if (prevState.isFinished) {
+        restoreQuizInterface();
+      }
+  
+      if (!chapterStates[currentChapter].shuffledQuestions) {
+        chapterStates[currentChapter].shuffledQuestions = shuffleArray(chapters[currentChapter]);
+        chapterStates[currentChapter].answered = Array(chapterStates[currentChapter].shuffledQuestions.length).fill(null);
+        chapterStates[currentChapter].comboCounted = Array(chapterStates[currentChapter].shuffledQuestions.length).fill(false);
+        chapterStates[currentChapter].current = 0;
+        chapterStates[currentChapter].comboStreak = 0;
+        chapterStates[currentChapter].isFinished = false;
+      }
+  
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      document.querySelector(`.tab[data-chapter="${chapterIndex}"]`).classList.add("active");
+  
+      loadQuestion();
+    }
+  
+    function restoreQuizInterface() {
+      document.querySelector(".quiz-container").innerHTML = `
+        <div class="logo">
+          <img src="asset/img/dnc.jpg" alt="Logo">
+        </div>
+        <div class="title">Trắc nghiệm ôn thi</div>
+        <div id="progress"></div>
+        <div id="quiz"></div>
+        <div class="controls">
+          <button id="prevBtn">⏪ Quay lại</button>
+          <button id="nextBtn">⏭ Tiếp theo</button>
+        </div>
+      `;
+  
+      const newProgress = document.getElementById("progress");
+      newProgress.parentNode.insertBefore(comboContainer, newProgress.nextSibling);
+  
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        const state = getCurrentState();
+        if (state.current > 0) {
+          state.current--;
+          loadQuestion();
+        }
+      });
+  
+      document.getElementById("nextBtn").addEventListener("click", handleNextClick);
+    }
+  
+    function handleNextClick() {
+      const state = getCurrentState();
+      if (!state.showingAnswer) {
+        const q = state.shuffledQuestions[state.current];
+        const userAns = state.answered[state.current];
+        const isCorrect = userAns === q.answer;
+  
+        let ansHtml = `
+          <div class="answer-box">
+            <div class="${isCorrect ? 'correct' : 'wrong'}">
+              <span class="icon">${isCorrect ? '✓' : '✗'}</span>
+              Bạn chọn: <strong>${userAns !== null ? q.options[userAns] : "(không chọn)"}</strong>
+            </div>
+            <div class="correct">
+              <span class="icon">✓</span>
+              Đáp án đúng: <strong>${q.options[q.answer]}</strong>
+            </div>
+          </div>
+        `;
+        document.getElementById("answerBox").innerHTML = ansHtml;
+        state.showingAnswer = true;
+  
+        if (userAns === q.answer && userAns !== null && !state.comboCounted[state.current]) {
+          state.comboStreak++;
+          state.comboCounted[state.current] = true;
+        } else if (userAns !== q.answer || userAns === null) {
+          if (state.comboStreak > 0) showBreakStreakMessage();
+          state.comboStreak = 0;
+          state.comboCounted.fill(false);
+        }
+        updateComboDisplay();
+        return;
+      }
+  
+      if (state.current < state.shuffledQuestions.length - 1) {
+        state.current++;
+        loadQuestion();
+      } else {
+        showSummary();
+      }
+    }
+  
+    switchChapter(0);
+  
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const chapterIndex = parseInt(tab.getAttribute("data-chapter"));
+        if (chapterIndex !== currentChapter) switchChapter(chapterIndex);
+      });
+    });
+  
+    document.getElementById("nextBtn").addEventListener("click", handleNextClick);
+  
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      const state = getCurrentState();
+      if (state.current > 0) {
+        state.current--;
+        loadQuestion();
+      }
+    });
+  
+    function showSummary() {
+      const state = getCurrentState();
+      const correct = state.answered.filter((a, i) => a === state.shuffledQuestions[i].answer).length;
+  
+      const comboHighlight = state.comboStreak > 0 
+        ? `<div style="
+            font-size: 1.6em; 
+            font-weight: bold; 
+            background: linear-gradient(135deg, #ec4899, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center; 
+            margin: 20px 0;
+          ">
+            🔥 Combo cao nhất: ${state.comboStreak} liên tiếp! 🔥
+          </div>`
+        : `<div style="font-size: 1.2em; color: #aaa; text-align: center; margin: 15px 0;">
+            Chưa có combo nào!
+          </div>`;
+  
+      let reviewHtml = `
+        <div class="summary">✅ Bạn trả lời đúng ${correct}/${state.shuffledQuestions.length} câu!</div>
+        ${comboHighlight}
+        <div class="review">`;
+      state.shuffledQuestions.forEach((q, i) => {
+        const userAns = state.answered[i];
+        const isCorrect = userAns === q.answer;
+        reviewHtml += `
+          <div class="answer-block">
+            <div class="question">❓ ${q.q}</div>
+            <div style="margin: 8px 0;">
+              <span style="color: ${isCorrect ? '#10b981' : '#ef4444'}; font-weight: bold;">
+                ${isCorrect ? '✓' : '✗'} Bạn chọn:
+              </span> 
+              ${userAns !== null ? q.options[userAns] : "(không chọn)"}
+            </div>
+            ${!isCorrect ? `<div style="margin: 8px 0; color: #10b981; font-weight: bold;">
+              ✓ Đáp án đúng: ${q.options[q.answer]}
+            </div>` : ''}
+          </div>
+        `;
+      });
+      reviewHtml += `
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button id="restartChapterBtn" style="padding:12px 24px; font-size:1.1em; border-radius:30px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color:white; border:none; cursor:pointer;">🔄 Làm lại chương này</button>
+        </div>
+      `;
+      document.querySelector(".quiz-container").innerHTML = reviewHtml;
+  
+      state.isFinished = true;
+  
+      document.getElementById("restartChapterBtn").addEventListener("click", () => {
+        chapterStates[currentChapter].shuffledQuestions = shuffleArray([...chapters[currentChapter]]);
+        chapterStates[currentChapter].answered = Array(chapterStates[currentChapter].shuffledQuestions.length).fill(null);
+        chapterStates[currentChapter].comboCounted = Array(chapterStates[currentChapter].shuffledQuestions.length).fill(false);
+        chapterStates[currentChapter].current = 0;
+        chapterStates[currentChapter].showingAnswer = false;
+        chapterStates[currentChapter].comboStreak = 0;
+        chapterStates[currentChapter].isFinished = false;
+  
+        restoreQuizInterface();
+        loadQuestion();
+      });
+    }
+  
+    // Khóa DevTools
+    (function lockDevTools() {
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('selectstart', e => e.preventDefault());
+      document.addEventListener('copy', e => e.preventDefault());
+      document.addEventListener('keydown', e => {
+        const key = e.key || e.keyCode;
+        if (e.key === 'F12' || key === 123 || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) || (e.ctrlKey && ['U','u','S','s'].includes(e.key))) {
+          e.preventDefault(); e.stopPropagation(); return false;
+        }
+      });
+      let devtoolsOpen = false;
+      const threshold = 160;
+      setInterval(() => {
+        const open = (window.outerWidth - window.innerWidth > threshold) || (window.outerHeight - window.innerHeight > threshold);
+        if (open && !devtoolsOpen) {
+          devtoolsOpen = true;
+          console.clear();
+          console.log("DevTools detected - nội dung bị hạn chế.");
+        } else if (!open) devtoolsOpen = false;
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>

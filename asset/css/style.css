@@ -122,7 +122,8 @@ body {
   padding: 10px 0;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s ease;
+  animation: none !important;
   height: 52px;
   line-height: 30px;
   position: relative;
@@ -144,12 +145,7 @@ body {
   left: 100%;
 }
 
-.grid-item:hover { 
-  border-color: var(--accent); 
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
+
 
 .grid-item.answered { 
   background: linear-gradient(135deg, var(--primary), var(--accent)); 
@@ -163,7 +159,7 @@ body {
   color: white; 
   border-color: var(--neutral-dark); 
   box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.3); 
-  animation: pulse 2s ease-in-out infinite;
+  animation: none !important;
 }
 
 @keyframes popIn {

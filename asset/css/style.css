@@ -35,7 +35,7 @@ body {
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 1400px;
+  max-width: 1700px;
   margin: 0 auto;
 }
 
@@ -106,7 +106,7 @@ body {
 }
 
 .quiz-container { flex: 3; min-width: 320px; }
-.grid-container { flex: 1; min-width: 220px; }
+.grid-container { flex: 1; min-width: 820px; }
 
 .question-grid {
   display: grid;
